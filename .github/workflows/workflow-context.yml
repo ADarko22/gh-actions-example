@@ -1,0 +1,47 @@
+## This workflow shows how to access workflow context.
+##
+## More details on https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/accessing-contextual-information-about-workflow-runs
+
+
+# The ${{ github.token }} syntax is used to access the token in the context of github.
+# Possible contexts are: github, env, vars, jobs, steps, runner, secret, needs, inputs, matrix, strategy, ...
+# Contexts can be used in expressions and must be enclosed in ${{ }}, while env variables can be accessed directly using $VAR_NAME or ${VAR_NAME} in scripts.
+# For example, in an if condition, `if: ${{ github.ref == 'refs/heads/main' }}`.
+name: Context testing
+on: push
+
+# The list of the functions (i.e. toJson, contains, startWith, ...): https://docs.github.com/en/actions/reference/workflows-and-actions/expressions#functions
+# Note that GitHub doesn't raise an error if a var is not found, it just returns an empty string! Good to check for vars to not be empty!!
+# Also, the var with closest scope is used (in case of same name).
+jobs:
+  dump_contexts_to_log:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: Dump job context
+        env:
+          JOB_CONTEXT: ${{ toJson(job) }}
+        run: echo "$JOB_CONTEXT"
+        # steps must have an id to be included in the context
+      - id: step_generate_random_number
+        name: Generate a random number
+        run: |
+          number=$((RANDOM))
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+      - name: Assign token to a variable
+        run: |
+          MY_CUSTOM_TOKEN="${{ github.token }}"
+          echo "My custom token is: $MY_CUSTOM_TOKEN"  # Do not do this!
+      - name: Set token as output
+        run: echo "myToken=${{ github.token }}" >> $GITHUB_OUTPUT  # Avoid this!
+      - name: Write token to a file
+        run: |
+          echo "${{ github.token }}" > secret.txt
+          cat secret.txt  # This would reveal the token!
+      - name: Dump steps context
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
