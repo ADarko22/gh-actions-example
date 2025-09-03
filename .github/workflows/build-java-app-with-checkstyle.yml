@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  buil-with-wheckstyle:
+  build-with-checkstyle:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -39,9 +39,9 @@ jobs:
           working-directory: java-app
   log-output:
     runs-on: ubuntu-latest
-    needs: buil-with-wheckstyle
+    needs: build-with-checkstyle
     steps:
       - name: Print the output
         # Print the output from the previous job
         run: |
-          echo "The checkstyle report is available at ${{ needs.buil-with-wheckstyle.outputs.checkstyle-artifact-url }}"
+          echo "The checkstyle report is available at ${{ needs.build-with-checkstyle.outputs.checkstyle-artifact-url }}"
