@@ -13,6 +13,8 @@ on: push
 # The list of the functions (i.e. toJson, contains, startWith, ...): https://docs.github.com/en/actions/reference/workflows-and-actions/expressions#functions
 # Note that GitHub doesn't raise an error if a var is not found, it just returns an empty string! Good to check for vars to not be empty!!
 # Also, the var with closest scope is used (in case of same name).
+# In SW Factory, repository-specific variable and secrets are defined as code in the sfy-ptech-inventory/<TRIGRAM>/reporistories/<MY-REPO>/config.yaml!!
+# -> secrets need to be encrypted using `gh secret`.
 jobs:
   dump_contexts_to_log:
     runs-on: ubuntu-latest
