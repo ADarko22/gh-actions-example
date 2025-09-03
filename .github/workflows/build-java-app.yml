@@ -5,6 +5,13 @@ on:
     branches:
       - main
   workflow_dispatch:
+    # Make the publish only available when manually triggered
+    inputs:
+      run_publish:
+        description: 'Run publish job?'
+        required: true
+        default: 'false'
+        type: boolean
 
 jobs:
   build:
@@ -39,6 +46,8 @@ jobs:
 
   publish:
     needs: build
+    # Only run the publish job if the workflow was manually triggered and the input is set to true
+    if: ${{ github.event.inputs.run_publish == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
