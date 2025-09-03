@@ -53,6 +53,14 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      # The https://github.com/marketplace/actions/download-a-build-artifact to download the artifact from the build job and place it in the target directory.
+      # This is required because the `mvn deploy` command expects the artifact to be in the target directory.
+      - name: Download build artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: java-app-artifacts
+          path: java-app/target
+
       # In order to update the artifact in the packages section of the repository, use the `mvn deploy` command with GITHUB_TOKEN.
       # See https://docs.github.com/en/actions/tutorials/publish-packages/publish-java-packages-with-maven#publishing-packages-to-github-packages
       - name: Deploy Application
