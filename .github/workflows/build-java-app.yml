@@ -23,6 +23,20 @@ jobs:
         run: mvn clean install
         working-directory: java-app
 
+      # The https://github.com/actions/upload-artifact action publishes the artifact in the workflow run summary.
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-app-artifacts
+          path: java-app/target/*.jar
+
+      # The https://github.com/marketplace/actions/junit-report-action to show the test results in the workflow run summary, or PR checks tab.
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v5
+        if: success() || failure() # always run even if the previous step fails
+        with:
+          report_paths: 'java-app/target/surefire-reports/TEST-*.xml'
+
   publish:
     needs: build
     runs-on: ubuntu-latest
@@ -41,15 +55,8 @@ jobs:
 
       # In order to update the artifact in the packages section of the repository, use the `mvn deploy` command with GITHUB_TOKEN.
       # See https://docs.github.com/en/actions/tutorials/publish-packages/publish-java-packages-with-maven#publishing-packages-to-github-packages
-      - name: Package Application
-        run: mvn --batch-mode package -D skipTests=true
+      - name: Deploy Application
+        run: mvn --batch-mode deploy -DskipTests=true
         working-directory: java-app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # The https://github.com/actions/upload-artifact action publishes the artifact in the workflow run summary.
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: java-app-package
-          path: java-app/target/*.jar
