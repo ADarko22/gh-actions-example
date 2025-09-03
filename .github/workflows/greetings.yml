@@ -9,6 +9,10 @@ on:
     types:
       - opened
 
+# ${{ github.token }} is a special auto-generated token provided by GitHub Actions.
+# It's used to authenticate on behalf of GitHub Actions when your workflow needs to interact with the GitHub API.
+# It is also available as ${{ secrets.GITHUB_TOKEN }}.
+# The token is scoped to the repository and has limited permissions by default. You can customize the token's permissions:
 permissions:
   issues: write
   pull-requests: write
