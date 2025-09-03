@@ -1,0 +1,25 @@
+name: Multiple Trigger Workflow
+
+# Note that multiple triggers trigger multiple runs of the workflow!
+# For example, creating and labeling an issue will trigger two separate runs of the workflow.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  label:
+    types:
+      - created
+  issues:
+    types:
+      - opened
+      - labeled
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "${{ github.actor }} Triggered by ${{ github.event_name }} event."

@@ -1,4 +1,5 @@
 name: Build Java Application
+
 on:
   push:
   pull_request:
