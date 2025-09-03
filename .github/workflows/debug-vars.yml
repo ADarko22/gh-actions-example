@@ -31,3 +31,9 @@ jobs:
       - name: Print Secret-Based Variable
         run:
           echo "Final Secret Value is ${{ secrets.MY_VAR }}"  # Prints: "" (if the secret is not set)
+
+  debug-vars-again:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print the Variable
+        run: echo "MY_VAR is $MY_VAR" # Prints: "🔵 Workflow Level Value"
