@@ -23,10 +23,31 @@ jobs:
         run: mvn clean install
         working-directory: java-app
 
-      - name: Package Application
-        run: mvn package -D skipTests=true
-        working-directory: java-app
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
+      - name: Set up JDK 21 Temurin
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # In order to update the artifact in the packages section of the repository, use the `mvn deploy` command with GITHUB_TOKEN.
+      # See https://docs.github.com/en/actions/tutorials/publish-packages/publish-java-packages-with-maven#publishing-packages-to-github-packages
+      - name: Package Application
+        run: mvn --batch-mode package -D skipTests=true
+        working-directory: java-app
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # The https://github.com/actions/upload-artifact action publishes the artifact in the workflow run summary.
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
