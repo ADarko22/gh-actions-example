@@ -8,6 +8,11 @@ inputs:
   working-directory:
     required: false
     default: ''
+# Define as output the URL of the uploaded Checkstyle report artifact
+outputs:
+  checkstyle-artifact-url:
+    description: "Path to the Checkstyle report artifact"
+    value: ${{ steps.upload-checkstyle.outputs.artifact-url }}
 
 runs:
   using: "composite"
@@ -17,6 +22,7 @@ runs:
       shell: bash
       working-directory: ${{ inputs.working-directory }}
     - name: Upload Checkstyle Report
+      id: upload-checkstyle
       uses: actions/upload-artifact@v4
       with:
         name: checkstyle-report

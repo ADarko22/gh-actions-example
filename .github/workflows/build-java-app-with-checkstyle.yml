@@ -8,11 +8,13 @@ on:
   push:
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
-  build:
+  buil-with-wheckstyle:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       packages: write
     defaults:
       run:
@@ -20,7 +22,8 @@ jobs:
         # works only for the shell.
         working-directory: java-app
     outputs:
-      checkstyle-report: ${{ steps.checkstyle.outputs.checkstyle-report }}
+      # Propagate the output from the code quality action to be used in other jobs
+      checkstyle-artifact-url: ${{ steps.checkstyle.outputs.checkstyle-artifact-url }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 21
@@ -36,8 +39,9 @@ jobs:
           working-directory: java-app
   log-output:
     runs-on: ubuntu-latest
-    needs: build
+    needs: buil-with-wheckstyle
     steps:
       - name: Print the output
+        # Print the output from the previous job
         run: |
-          echo "The output is ${{ needs.build.outputs.checkstyle-report }}"
+          echo "The checkstyle report is available at ${{ needs.buil-with-wheckstyle.outputs.checkstyle-artifact-url }}"
